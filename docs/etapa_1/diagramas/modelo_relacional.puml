@@ -1,0 +1,47 @@
+@startuml modelo_relacional
+title Caso 6 - Modelo relacional (base de datos examen_progra3)
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+left to right direction
+
+entity "vehiculo" as vehiculo {
+  <b>placa</b> : VARCHAR(10) <<PK>>
+  --
+  tipo : VARCHAR(15) NOT NULL
+  marca : VARCHAR(40) NOT NULL
+  color : VARCHAR(30) NOT NULL
+  propietario : VARCHAR(80) NOT NULL
+  ..
+  CHECK tipo IN ('AUTOMOVIL','MOTOCICLETA')
+}
+
+entity "zona" as zona {
+  <b>codigo</b> : VARCHAR(10) <<PK>>
+  --
+  nombre : VARCHAR(60) NOT NULL <<UNIQUE>>
+  tipo_vehiculo : VARCHAR(15) NOT NULL
+  capacidad : INT NOT NULL
+  ..
+  CHECK tipo_vehiculo IN ('AUTOMOVIL','MOTOCICLETA')
+  CHECK capacidad > 0
+}
+
+entity "ingreso" as ingreso {
+  <b>id</b> : INT AUTO_INCREMENT <<PK>>
+  --
+  vehiculo_placa : VARCHAR(10) NOT NULL <<FK>>
+  zona_codigo : VARCHAR(10) NOT NULL <<FK>>
+  fecha_hora_entrada : DATETIME NOT NULL
+  fecha_hora_salida : DATETIME NULL
+  placa_dentro : VARCHAR(10) GENERATED <<UNIQUE>>
+  ..
+  CHECK fecha_hora_salida IS NULL
+        OR fecha_hora_salida >= fecha_hora_entrada
+  INDEX (zona_codigo, fecha_hora_salida)
+}
+
+vehiculo ||--o{ ingreso : "fk_ingreso_vehiculo"
+zona ||--o{ ingreso : "fk_ingreso_zona"
+@enduml
