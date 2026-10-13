@@ -16,19 +16,21 @@ public class VehiculoController {
 
     public Respuesta<Vehiculo> registrar(String placa, TipoVehiculo tipo, String marca,
                                          String color, String propietario) {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Vehículo registrado correctamente.",
+                () -> vehiculoService.registrar(new Vehiculo(placa, tipo, marca, color, propietario)));
     }
 
     public Respuesta<Vehiculo> buscar(String placa) {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Vehículo encontrado.", () -> vehiculoService.buscarPorPlaca(placa));
     }
 
     public Respuesta<List<Vehiculo>> listar() {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Vehículos autorizados:", vehiculoService::listar);
     }
 
     public Respuesta<Vehiculo> actualizar(String placa, TipoVehiculo tipo, String marca,
                                           String color, String propietario) {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Vehículo actualizado correctamente.",
+                () -> vehiculoService.actualizar(new Vehiculo(placa, tipo, marca, color, propietario)));
     }
 }

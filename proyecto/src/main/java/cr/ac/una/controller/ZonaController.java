@@ -16,22 +16,24 @@ public class ZonaController {
     }
 
     public Respuesta<Zona> registrar(String codigo, String nombre, TipoVehiculo tipo, int capacidad) {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Zona registrada correctamente.",
+                () -> zonaService.registrar(new Zona(codigo, nombre, tipo, capacidad)));
     }
 
     public Respuesta<Zona> buscar(String codigo) {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Zona encontrada.", () -> zonaService.buscarPorCodigo(codigo));
     }
 
     public Respuesta<List<Zona>> listar() {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Zonas del parqueo:", zonaService::listar);
     }
 
     public Respuesta<Zona> actualizarCapacidad(String codigo, int nuevaCapacidad) {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Capacidad actualizada correctamente.",
+                () -> zonaService.actualizarCapacidad(codigo, nuevaCapacidad));
     }
 
     public Respuesta<List<OcupacionZona>> consultarOcupacion() {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Espacios por zona:", zonaService::consultarOcupacion);
     }
 }

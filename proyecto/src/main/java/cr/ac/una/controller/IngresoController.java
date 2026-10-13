@@ -2,6 +2,7 @@ package cr.ac.una.controller;
 
 import cr.ac.una.model.Ingreso;
 import cr.ac.una.service.IngresoService;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /** Recibe las solicitudes de ingreso/salida y las consultas de estadías. */
@@ -14,18 +15,25 @@ public class IngresoController {
     }
 
     public Respuesta<Ingreso> registrarIngreso(String placa, String codigoZona) {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Ingreso registrado correctamente.",
+                () -> ingresoService.registrarIngreso(placa, codigoZona));
     }
 
     public Respuesta<Ingreso> registrarSalida(String placa) {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Salida registrada correctamente.",
+                () -> ingresoService.registrarSalida(placa));
     }
 
     public Respuesta<List<Ingreso>> listarVehiculosDentro() {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Vehículos dentro del parqueo:", ingresoService::listarVehiculosDentro);
     }
 
     public Respuesta<List<Ingreso>> historial(String placa) {
-        throw new UnsupportedOperationException("Pendiente: se implementa en la Etapa 2");
+        return ManejadorErrores.ejecutar("Historial de ingresos:", () -> ingresoService.historialPorPlaca(placa));
+    }
+
+    /** Hora actual según el Service (para calcular permanencias en pantalla). */
+    public LocalDateTime ahora() {
+        return ingresoService.ahora();
     }
 }

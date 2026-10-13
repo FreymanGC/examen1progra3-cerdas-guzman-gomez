@@ -1,0 +1,397 @@
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: Conexión exitosa: MariaDB 10.11.14-MariaDB-0ubuntu0.24.04.1 — base de datos: examen_progra3
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Vehículos autorizados ===
+1. Registrar vehículo
+2. Consultar vehículo por placa
+3. Listar vehículos
+4. Actualizar vehículo
+0. Volver
+Opción: Vehículos autorizados:
+  BCD123     | Automóvil   | Toyota       | Blanco     | Ana Rojas Mora
+  BRT456     | Automóvil   | Hyundai      | Gris       | Luis Solano Vargas
+  CLM789     | Automóvil   | Nissan       | Rojo       | María Jiménez Cruz
+  DFG321     | Automóvil   | Suzuki       | Azul       | Carlos Méndez Arias
+  HJK654     | Automóvil   | Kia          | Negro      | Sofía Castro León
+  MOT-100200 | Motocicleta | Honda        | Rojo       | Diego Brenes Quesada
+  MOT-300400 | Motocicleta | Yamaha       | Negro      | Valeria Umaña Soto
+  MOT-500600 | Motocicleta | Bajaj        | Azul       | Andrés Porras Vega
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Vehículos autorizados ===
+1. Registrar vehículo
+2. Consultar vehículo por placa
+3. Listar vehículos
+4. Actualizar vehículo
+0. Volver
+Opción: Placa: Tipo (1 = Automóvil, 2 = Motocicleta): Marca: Color: Propietario: Vehículo registrado correctamente.
+  FGH987     | Automóvil   | Mazda        | Plateado   | Pedro Vargas Solís
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Vehículos autorizados ===
+1. Registrar vehículo
+2. Consultar vehículo por placa
+3. Listar vehículos
+4. Actualizar vehículo
+0. Volver
+Opción: Placa: Tipo (1 = Automóvil, 2 = Motocicleta): Marca: Color: Propietario: Dato inválido: Ya existe un vehículo registrado con la placa FGH987.
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Vehículos autorizados ===
+1. Registrar vehículo
+2. Consultar vehículo por placa
+3. Listar vehículos
+4. Actualizar vehículo
+0. Volver
+Opción: Placa: Tipo (1 = Automóvil, 2 = Motocicleta): Marca: Color: Propietario: Dato inválido: La placa '!!' no es válida: use de 3 a 10 letras, números o guion.
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Vehículos autorizados ===
+1. Registrar vehículo
+2. Consultar vehículo por placa
+3. Listar vehículos
+4. Actualizar vehículo
+0. Volver
+Opción: Placa: Vehículo encontrado.
+  FGH987     | Automóvil   | Mazda        | Plateado   | Pedro Vargas Solís
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Vehículos autorizados ===
+1. Registrar vehículo
+2. Consultar vehículo por placa
+3. Listar vehículos
+4. Actualizar vehículo
+0. Volver
+Opción: Placa del vehículo a actualizar: Datos actuales: FGH987     | Automóvil   | Mazda        | Plateado   | Pedro Vargas Solís
+(Deje el campo vacío para conservar el valor actual)
+Tipo (1 = Automóvil, 2 = Motocicleta) [Automóvil]: Marca [Mazda]: Color [Plateado]: Propietario [Pedro Vargas Solís]: Vehículo actualizado correctamente.
+  FGH987     | Automóvil   | Mazda        | Negro      | Pedro Vargas Solís
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Zonas del parqueo ===
+1. Registrar zona
+2. Consultar zona por código
+3. Listar zonas
+4. Actualizar capacidad de una zona
+0. Volver
+Opción: Código: Nombre: Tipo (1 = Automóvil, 2 = Motocicleta): Capacidad: Zona registrada correctamente.
+  C      | Zona C - Visitantes        | Automóvil   | capacidad: 4
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Zonas del parqueo ===
+1. Registrar zona
+2. Consultar zona por código
+3. Listar zonas
+4. Actualizar capacidad de una zona
+0. Volver
+Opción: Zonas del parqueo:
+  A      | Zona A - Automóviles norte | Automóvil   | capacidad: 5
+  B      | Zona B - Automóviles sur   | Automóvil   | capacidad: 3
+  C      | Zona C - Visitantes        | Automóvil   | capacidad: 4
+  M      | Zona M - Motocicletas      | Motocicleta | capacidad: 2
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Zonas del parqueo ===
+1. Registrar zona
+2. Consultar zona por código
+3. Listar zonas
+4. Actualizar capacidad de una zona
+0. Volver
+Opción: Código de la zona: Nueva capacidad: Operación rechazada: La zona M tiene 2 vehículos dentro; la capacidad no puede ser menor que eso.
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Zonas del parqueo ===
+1. Registrar zona
+2. Consultar zona por código
+3. Listar zonas
+4. Actualizar capacidad de una zona
+0. Volver
+Opción: Código de la zona: Nueva capacidad: Capacidad actualizada correctamente.
+  B      | Zona B - Automóviles sur   | Automóvil   | capacidad: 4
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: Espacios por zona:
+  A      | Zona A - Automóviles norte | Automóvil   | ocupados:   2 | libres:   3 | capacidad:   5
+  B      | Zona B - Automóviles sur   | Automóvil   | ocupados:   0 | libres:   4 | capacidad:   4
+  C      | Zona C - Visitantes        | Automóvil   | ocupados:   0 | libres:   4 | capacidad:   4
+  M      | Zona M - Motocicletas      | Motocicleta | ocupados:   2 | libres:   0 | capacidad:   2
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Registrar ingreso ===
+Placa: Código de zona (Enter = asignar automáticamente): Ingreso registrado correctamente.
+  Ingreso #8 | FGH987 -> zona A (Zona A - Automóviles norte) | entrada: 12/10/2026 11:00
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Registrar ingreso ===
+Placa: Código de zona (Enter = asignar automáticamente): Operación rechazada: El vehículo FGH987 ya se encuentra dentro del parqueo.
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Registrar ingreso ===
+Placa: Código de zona (Enter = asignar automáticamente): Operación rechazada: No hay espacios libres para motocicletas: todas las zonas están llenas.
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Registrar ingreso ===
+Placa: Código de zona (Enter = asignar automáticamente): Operación rechazada: La zona M es para motocicletas; el vehículo CLM789 es automóvil.
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Registrar ingreso ===
+Placa: Código de zona (Enter = asignar automáticamente): No encontrado: El vehículo ZZZ999 no está registrado como vehículo autorizado.
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: Vehículos dentro del parqueo:
+  BCD123     | Automóvil   | Toyota     | zona A     | desde 12/10/2026 08:00 | 3 h 0 min
+  BRT456     | Automóvil   | Hyundai    | zona A     | desde 12/10/2026 09:30 | 1 h 30 min
+  FGH987     | Automóvil   | Mazda      | zona A     | desde 12/10/2026 11:00 | 0 h 0 min
+  MOT-100200 | Motocicleta | Honda      | zona M     | desde 12/10/2026 09:00 | 2 h 0 min
+  MOT-300400 | Motocicleta | Yamaha     | zona M     | desde 12/10/2026 10:15 | 0 h 45 min
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Registrar salida ===
+Placa: Salida registrada correctamente.
+  BCD123 salió de la zona A | entrada: 12/10/2026 08:00 | salida: 12/10/2026 11:00 | permanencia: 3 h 0 min
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: 
+=== Registrar salida ===
+Placa: Operación rechazada: No se puede registrar la salida: el vehículo DFG321 no está dentro del parqueo.
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: Placa: Historial de ingresos:
+  #4    | zona A     | entrada 12/10/2026 08:00 | salida 12/10/2026 11:00 | 3 h 0 min
+  #1    | zona A     | entrada 10/10/2026 06:00 | salida 10/10/2026 10:00 | 4 h 0 min
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción:   Valor no válido. Digite un número entero.
+Opción: Espacios por zona:
+  A      | Zona A - Automóviles norte | Automóvil   | ocupados:   2 | libres:   3 | capacidad:   5
+  B      | Zona B - Automóviles sur   | Automóvil   | ocupados:   0 | libres:   4 | capacidad:   4
+  C      | Zona C - Visitantes        | Automóvil   | ocupados:   0 | libres:   4 | capacidad:   4
+  M      | Zona M - Motocicletas      | Motocicleta | ocupados:   2 | libres:   0 | capacidad:   2
+
+=== Parqueo Institucional - Caseta de ingreso ===
+1. Probar conexión con la base de datos
+2. Vehículos autorizados
+3. Zonas del parqueo
+4. Registrar INGRESO de vehículo
+5. Registrar SALIDA de vehículo
+6. Vehículos dentro del parqueo
+7. Espacios libres por zona
+8. Historial de ingresos de un vehículo
+0. Salir
+Opción: Fin del programa.
