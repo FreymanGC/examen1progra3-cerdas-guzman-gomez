@@ -2,8 +2,8 @@
 -- Examen Práctico Integrador — Programación III
 -- Caso 6: Administración de parqueos
 --
--- Versión preliminar (Etapa 1): base de datos y tablas.
--- Los datos de prueba se agregan en la Etapa 2.
+-- Versión definitiva (Etapa 2): base de datos, tablas, restricciones
+-- y datos de prueba.
 --
 -- Ejecutar:  mysql -u root -p < database/schema.sql
 -- El nombre de la base de datos debe coincidir con db.url en db.properties.
@@ -70,3 +70,36 @@ CREATE TABLE ingreso (
 
 -- Acelera el conteo de vehículos dentro de cada zona (RN-01).
 CREATE INDEX ix_ingreso_zona_abierto ON ingreso (zona_codigo, fecha_hora_salida);
+
+-- ---------------------------------------------------------------------
+-- Datos de prueba
+-- ---------------------------------------------------------------------
+
+INSERT INTO zona (codigo, nombre, tipo_vehiculo, capacidad) VALUES
+    ('A', 'Zona A - Automóviles norte', 'AUTOMOVIL',   5),
+    ('B', 'Zona B - Automóviles sur',   'AUTOMOVIL',   3),
+    ('M', 'Zona M - Motocicletas',      'MOTOCICLETA', 2);
+
+INSERT INTO vehiculo (placa, tipo, marca, color, propietario) VALUES
+    ('BCD123',     'AUTOMOVIL',   'Toyota',     'Blanco', 'Ana Rojas Mora'),
+    ('BRT456',     'AUTOMOVIL',   'Hyundai',    'Gris',   'Luis Solano Vargas'),
+    ('CLM789',     'AUTOMOVIL',   'Nissan',     'Rojo',   'María Jiménez Cruz'),
+    ('DFG321',     'AUTOMOVIL',   'Suzuki',     'Azul',   'Carlos Méndez Arias'),
+    ('HJK654',     'AUTOMOVIL',   'Kia',        'Negro',  'Sofía Castro León'),
+    ('MOT-100200', 'MOTOCICLETA', 'Honda',      'Rojo',   'Diego Brenes Quesada'),
+    ('MOT-300400', 'MOTOCICLETA', 'Yamaha',     'Negro',  'Valeria Umaña Soto'),
+    ('MOT-500600', 'MOTOCICLETA', 'Bajaj',      'Azul',   'Andrés Porras Vega');
+
+-- Historial (ingresos ya cerrados)
+INSERT INTO ingreso (vehiculo_placa, zona_codigo, fecha_hora_entrada, fecha_hora_salida) VALUES
+    ('BCD123',     'A', NOW() - INTERVAL 2 DAY - INTERVAL 5 HOUR, NOW() - INTERVAL 2 DAY - INTERVAL 1 HOUR),
+    ('CLM789',     'B', NOW() - INTERVAL 1 DAY - INTERVAL 8 HOUR, NOW() - INTERVAL 1 DAY - INTERVAL 3 HOUR),
+    ('MOT-500600', 'M', NOW() - INTERVAL 1 DAY - INTERVAL 6 HOUR, NOW() - INTERVAL 1 DAY - INTERVAL 2 HOUR);
+
+-- Vehículos que están dentro ahora (ingresos abiertos).
+-- La zona M queda LLENA (2/2) para demostrar RN-01 con MOT-500600.
+INSERT INTO ingreso (vehiculo_placa, zona_codigo, fecha_hora_entrada) VALUES
+    ('BCD123',     'A', NOW() - INTERVAL 3 HOUR),
+    ('BRT456',     'A', NOW() - INTERVAL 90 MINUTE),
+    ('MOT-100200', 'M', NOW() - INTERVAL 2 HOUR),
+    ('MOT-300400', 'M', NOW() - INTERVAL 45 MINUTE);
