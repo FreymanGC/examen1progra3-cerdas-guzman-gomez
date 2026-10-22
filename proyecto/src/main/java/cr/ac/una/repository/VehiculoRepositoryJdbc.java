@@ -2,6 +2,7 @@ package cr.ac.una.repository;
 
 import cr.ac.una.config.ConexionBD;
 import cr.ac.una.exception.DatosException;
+import cr.ac.una.model.CategoriaVehiculo;
 import cr.ac.una.model.TipoVehiculo;
 import cr.ac.una.model.Vehiculo;
 import java.sql.Connection;
@@ -15,11 +16,11 @@ import java.util.Optional;
 /** Implementación JDBC de VehiculoRepository sobre la tabla vehiculo. */
 public class VehiculoRepositoryJdbc implements VehiculoRepository {
 
-    private static final String COLUMNAS = "placa, tipo, marca, color, propietario";
+    private static final String COLUMNAS = "placa, tipo, marca, color, propietario, categoria";
 
     @Override
     public void insertar(Vehiculo v) {
-        String sql = "INSERT INTO vehiculo (" + COLUMNAS + ") VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO vehiculo (" + COLUMNAS + ") VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection con = ConexionBD.obtenerConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, v.getPlaca());
@@ -27,6 +28,7 @@ public class VehiculoRepositoryJdbc implements VehiculoRepository {
             ps.setString(3, v.getMarca());
             ps.setString(4, v.getColor());
             ps.setString(5, v.getPropietario());
+            ps.setString(6, v.getCategoria().name());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new DatosException("Error al registrar el vehículo " + v.getPlaca(), e);
@@ -65,14 +67,15 @@ public class VehiculoRepositoryJdbc implements VehiculoRepository {
 
     @Override
     public void actualizar(Vehiculo v) {
-        String sql = "UPDATE vehiculo SET tipo = ?, marca = ?, color = ?, propietario = ? WHERE placa = ?";
+        String sql = "UPDATE vehiculo SET tipo = ?, marca = ?, color = ?, propietario = ?, categoria = ? WHERE placa = ?";
         try (Connection con = ConexionBD.obtenerConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, v.getTipo().name());
             ps.setString(2, v.getMarca());
             ps.setString(3, v.getColor());
             ps.setString(4, v.getPropietario());
-            ps.setString(5, v.getPlaca());
+            ps.setString(5, v.getCategoria().name());
+            ps.setString(6, v.getPlaca());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new DatosException("Error al actualizar el vehículo " + v.getPlaca(), e);
@@ -85,6 +88,7 @@ public class VehiculoRepositoryJdbc implements VehiculoRepository {
                 TipoVehiculo.valueOf(rs.getString("tipo")),
                 rs.getString("marca"),
                 rs.getString("color"),
-                rs.getString("propietario"));
+                rs.getString("propietario"),
+                CategoriaVehiculo.valueOf(rs.getString("categoria")));
     }
 }

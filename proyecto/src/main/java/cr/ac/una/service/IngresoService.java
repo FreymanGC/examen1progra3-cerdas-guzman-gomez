@@ -1,9 +1,11 @@
 package cr.ac.una.service;
 
 import cr.ac.una.exception.EntidadNoEncontradaException;
+import cr.ac.una.exception.EspaciosReservadosException;
 import cr.ac.una.exception.ParqueoLlenoException;
 import cr.ac.una.exception.ReglaNegocioException;
 import cr.ac.una.exception.VehiculoYaIngresadoException;
+import cr.ac.una.model.CategoriaVehiculo;
 import cr.ac.una.model.Ingreso;
 import cr.ac.una.model.Vehiculo;
 import cr.ac.una.model.Zona;
@@ -69,8 +71,7 @@ public class IngresoService {
 
         // 5. Insertar el ingreso con la fecha y hora actual.
         Ingreso ingreso = new Ingreso(vehiculo, zona, ahora());
-        ingresoRepository.insertar(ingreso);
-        return ingreso;
+        return ingresoRepository.insertarConReserva(ingreso);
     }
 
     /**
@@ -118,35 +119,80 @@ public class IngresoService {
 
     private Zona validarZonaElegida(Vehiculo vehiculo, String codigoZona) {
         String c = ZonaService.normalizarCodigo(codigoZona);
+
         Zona zona = zonaRepository.buscarPorCodigo(c)
-                .orElseThrow(() -> new EntidadNoEncontradaException("No existe una zona con el código " + c + "."));
-        // RN-03
+                .orElseThrow(() -> new EntidadNoEncontradaException(
+                "No existe una zona con el código " + c + "."));
+
+    // RN-03: compatibilidad del tipo de vehículo.
         if (zona.getTipoVehiculo() != vehiculo.getTipo()) {
-            throw new ReglaNegocioException("La zona " + c + " es para "
-                    + zona.getTipoVehiculo().getDescripcion().toLowerCase() + "s; el vehículo "
-                    + vehiculo.getPlaca() + " es " + vehiculo.getTipo().getDescripcion().toLowerCase() + ".");
+            throw new ReglaNegocioException(
+                    "La zona " + c + " es para "
+                    + zona.getTipoVehiculo().getDescripcion().toLowerCase()
+                    + "s; el vehículo " + vehiculo.getPlaca()
+                    + " es " + vehiculo.getTipo().getDescripcion().toLowerCase() + ".");
         }
-        // RN-01
+
         int ocupados = ingresoRepository.contarAbiertosPorZona(c);
+
+    // RN-01: capacidad máxima de la zona.
         if (ocupados >= zona.getCapacidad()) {
-            throw new ParqueoLlenoException("La zona " + c + " está llena (" + ocupados + "/"
-                    + zona.getCapacidad() + " espacios ocupados).");
+            throw new ParqueoLlenoException(
+                    "La zona " + c + " está llena ("
+                    + ocupados + "/" + zona.getCapacidad()
+                    + " espacios ocupados).");
         }
-        return zona;
+
+    // RN-N1 y RN-N2: espacios reservados para oficiales.
+        if (ocupados >= limiteOcupacion(vehiculo, zona)) {
+            throw new EspaciosReservadosException(
+                "No se permite el ingreso a la zona " + c
+                + ": los últimos dos espacios están reservados "
+                + "para vehículos oficiales.");
     }
 
+    return zona;
+}
+
     private Zona asignarZonaAutomatica(Vehiculo vehiculo) {
-        List<Zona> zonas = zonaRepository.listarPorTipo(vehiculo.getTipo()); // RN-03
+        List<Zona> zonas = zonaRepository.listarPorTipo(vehiculo.getTipo());
+
+    // RN-03
         if (zonas.isEmpty()) {
-            throw new ReglaNegocioException("No hay zonas registradas para "
-                    + vehiculo.getTipo().getDescripcion().toLowerCase() + "s.");
+            throw new ReglaNegocioException(
+                "No hay zonas registradas para "
+                + vehiculo.getTipo().getDescripcion().toLowerCase() + "s.");
         }
+
         for (Zona zona : zonas) {
-            if (ingresoRepository.contarAbiertosPorZona(zona.getCodigo()) < zona.getCapacidad()) { // RN-01
+            int ocupados = ingresoRepository.contarAbiertosPorZona(zona.getCodigo());
+
+            if (ocupados < limiteOcupacion(vehiculo, zona)) {
                 return zona;
             }
-        }
-        throw new ParqueoLlenoException("No hay espacios libres para "
-                + vehiculo.getTipo().getDescripcion().toLowerCase() + "s: todas las zonas están llenas.");
     }
+
+        if (vehiculo.getCategoria() != CategoriaVehiculo.OFICIAL) {
+            throw new EspaciosReservadosException(
+                "No hay espacios generales disponibles para vehículos de tipo "
+                + vehiculo.getTipo().getDescripcion().toLowerCase()
+                + " . Los espacios restantes están reservados "
+                + "para vehículos oficiales o las zonas están llenas.");
+    }
+
+        throw new ParqueoLlenoException(
+            "No hay espacios libres para "
+            + vehiculo.getTipo().getDescripcion().toLowerCase()
+            + "s: todas las zonas están llenas.");
+}
+    
+    private int limiteOcupacion(Vehiculo vehiculo, Zona zona) {
+        if (vehiculo.getCategoria() == CategoriaVehiculo.OFICIAL) {
+            return zona.getCapacidad();
+        }
+
+        return Math.max(0, zona.getCapacidad() - 2);
+    }
+    
+    
 }

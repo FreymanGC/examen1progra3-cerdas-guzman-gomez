@@ -1,4 +1,6 @@
 package cr.ac.una.repository;
+import cr.ac.una.model.Vehiculo;
+import cr.ac.una.model.Zona;
 
 import cr.ac.una.model.Ingreso;
 import java.time.LocalDateTime;
@@ -26,4 +28,10 @@ public interface IngresoRepository {
     List<Ingreso> listarPorPlaca(String placa);
 
     void registrarSalida(int idIngreso, LocalDateTime fechaHoraSalida);
+    
+    /**
+ * Registra un ingreso de forma transaccional, verificando nuevamente
+ * la disponibilidad de la zona bajo bloqueo.
+ */
+    Ingreso insertarConReserva(Ingreso ingreso);
 }

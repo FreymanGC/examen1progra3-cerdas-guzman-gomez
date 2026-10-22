@@ -11,16 +11,18 @@ public class Vehiculo {
     private String marca;
     private String color;
     private String propietario;
+    private CategoriaVehiculo categoria;
 
     public Vehiculo() {
     }
 
-    public Vehiculo(String placa, TipoVehiculo tipo, String marca, String color, String propietario) {
+    public Vehiculo(String placa, TipoVehiculo tipo, String marca, String color, String propietario,  CategoriaVehiculo categoria) {
         this.placa = placa;
         this.tipo = tipo;
         this.marca = marca;
         this.color = color;
         this.propietario = propietario;
+        this.categoria = categoria;
     }
 
     public String getPlaca() {
@@ -62,10 +64,25 @@ public class Vehiculo {
     public void setPropietario(String propietario) {
         this.propietario = propietario;
     }
+    
+    public CategoriaVehiculo getCategoria() {
+        return categoria;
+}
+
+    public void setCategoria(CategoriaVehiculo categoria) {
+        this.categoria = categoria;
+}
 
     @Override
     public String toString() {
-        return String.format("%-10s | %-11s | %-12s | %-10s | %s",
-                placa, tipo == null ? "-" : tipo.getDescripcion(), marca, color, propietario);
+        return String.format(
+            "%-10s | %-11s | %-12s | %-10s | %-12s | %s",
+            placa,
+            tipo == null ? "-" : tipo.getDescripcion(),
+            marca,
+            color,
+            categoria == null ? "-" : categoria.name(),
+            propietario
+         );
     }
 }

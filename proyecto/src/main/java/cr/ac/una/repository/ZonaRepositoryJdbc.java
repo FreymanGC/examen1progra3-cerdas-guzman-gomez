@@ -2,6 +2,7 @@ package cr.ac.una.repository;
 
 import cr.ac.una.config.ConexionBD;
 import cr.ac.una.exception.DatosException;
+import cr.ac.una.exception.ReglaNegocioException;
 import cr.ac.una.model.OcupacionZona;
 import cr.ac.una.model.TipoVehiculo;
 import cr.ac.una.model.Zona;
@@ -126,5 +127,98 @@ public class ZonaRepositoryJdbc implements ZonaRepository {
                 rs.getString("nombre"),
                 TipoVehiculo.valueOf(rs.getString("tipo_vehiculo")),
                 rs.getInt("capacidad"));
+    }
+    
+    @Override
+    public Zona actualizarCapacidadSegura(
+        String codigo, int nuevaCapacidad) {
+
+        String bloquearZona =
+            "SELECT nombre, tipo_vehiculo "
+            + "FROM zona WHERE codigo = ? FOR UPDATE";
+
+        String consultarOcupacion =
+            "SELECT id FROM ingreso "
+            + "WHERE zona_codigo = ? "
+            + "AND fecha_hora_salida IS NULL FOR UPDATE";
+
+        String actualizarCapacidad =
+            "UPDATE zona SET capacidad = ? WHERE codigo = ?";
+
+        try (Connection con = ConexionBD.obtenerConexion()) {
+            con.setAutoCommit(false);
+
+            try {
+                String nombre;
+                TipoVehiculo tipo;
+
+            // Bloquear la zona antes de comprobar su ocupación.
+            try (PreparedStatement ps =
+                    con.prepareStatement(bloquearZona)) {
+
+                ps.setString(1, codigo);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new ReglaNegocioException(
+                                "No existe la zona " + codigo + ".");
+                    }
+
+                    nombre = rs.getString("nombre");
+                    tipo = TipoVehiculo.valueOf(
+                            rs.getString("tipo_vehiculo"));
+                }
+            }
+
+            // Consultar ocupación actual con bloqueo.
+            int ocupados = 0;
+
+            try (PreparedStatement ps =
+                    con.prepareStatement(consultarOcupacion)) {
+
+                ps.setString(1, codigo);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        ocupados++;
+                    }
+                }
+            }
+
+            if (nuevaCapacidad < ocupados) {
+                throw new ReglaNegocioException(
+                        "La zona " + codigo + " tiene "
+                        + ocupados + " vehículos dentro; "
+                        + "la capacidad no puede ser menor que eso.");
+            }
+
+            // Actualizar dentro de la misma transacción.
+            try (PreparedStatement ps =
+                    con.prepareStatement(actualizarCapacidad)) {
+
+                ps.setInt(1, nuevaCapacidad);
+                ps.setString(2, codigo);
+                ps.executeUpdate();
+            }
+
+            con.commit();
+
+            return new Zona(
+                    codigo, nombre, tipo, nuevaCapacidad);
+
+        } catch (SQLException | RuntimeException e) {
+            try {
+                con.rollback();
+            } catch (SQLException rollbackError) {
+                e.addSuppressed(rollbackError);
+            }
+            throw e;
+        }
+
+    } catch (SQLException e) {
+        throw new DatosException(
+                "Error al actualizar la capacidad de la zona "
+                + codigo, e);
+        }
     }
 }

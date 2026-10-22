@@ -1,0 +1,225 @@
+@startuml uml
+title Caso 6 - Administración de parqueos (diagrama de clases)
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 50
+left to right direction
+
+package "app" {
+  class App {
+    - vehiculos : VehiculoController
+    - zonas : ZonaController
+    - ingresos : IngresoController
+    + main(args : String[]) : void
+  }
+  class Consola <<utilidad>> {
+    + leerTexto(msg : String) : String
+    + leerEntero(msg : String) : int
+  }
+}
+
+package "config" {
+  class ConexionBD <<utilidad>> {
+    + obtenerConexion() : Connection
+  }
+  class Contenedor {
+    + getVehiculoController() : VehiculoController
+    + getZonaController() : ZonaController
+    + getIngresoController() : IngresoController
+  }
+}
+
+package "controller" {
+  class VehiculoController {
+    - vehiculoService : VehiculoService
+    + registrar(placa, tipo, marca, color, propietario, categoria) : Respuesta<Vehiculo>
+    + buscar(placa : String) : Respuesta<Vehiculo>
+    + listar() : Respuesta<List<Vehiculo>>
+    + actualizar(placa, tipo, marca, color, propietario, categoria) : Respuesta<Vehiculo>
+  }
+  class ZonaController {
+    - zonaService : ZonaService
+    + registrar(codigo, nombre, tipo, capacidad) : Respuesta<Zona>
+    + buscar(codigo : String) : Respuesta<Zona>
+    + listar() : Respuesta<List<Zona>>
+    + actualizarCapacidad(codigo, capacidad) : Respuesta<Zona>
+    + consultarOcupacion() : Respuesta<List<OcupacionZona>>
+  }
+  class IngresoController {
+    - ingresoService : IngresoService
+    + registrarIngreso(placa, codigoZona) : Respuesta<Ingreso>
+    + registrarSalida(placa : String) : Respuesta<Ingreso>
+    + listarVehiculosDentro() : Respuesta<List<Ingreso>>
+    + historial(placa : String) : Respuesta<List<Ingreso>>
+  }
+  class "Respuesta<T>" as Respuesta <<record>> {
+    + exito : boolean
+    + mensaje : String
+    + dato : T
+  }
+}
+
+package "service" {
+  class VehiculoService {
+    - vehiculoRepository : VehiculoRepository
+    - ingresoRepository : IngresoRepository
+    + registrar(v : Vehiculo) : Vehiculo
+    + buscarPorPlaca(placa : String) : Vehiculo
+    + listar() : List<Vehiculo>
+    + actualizar(v : Vehiculo) : Vehiculo
+  }
+  class ZonaService {
+    - zonaRepository : ZonaRepository
+    - ingresoRepository : IngresoRepository
+    + registrar(z : Zona) : Zona
+    + buscarPorCodigo(codigo : String) : Zona
+    + listar() : List<Zona>
+    + actualizarCapacidad(codigo, capacidad) : Zona
+    + consultarOcupacion() : List<OcupacionZona>
+  }
+  class IngresoService {
+    - ingresoRepository : IngresoRepository
+    - vehiculoRepository : VehiculoRepository
+    - zonaRepository : ZonaRepository
+    - reloj : Clock
+    + registrarIngreso(placa, codigoZona) : Ingreso
+    + registrarSalida(placa : String) : Ingreso
+    + listarVehiculosDentro() : List<Ingreso>
+    + historialPorPlaca(placa : String) : List<Ingreso>
+  }
+}
+
+package "repository" {
+  interface VehiculoRepository {
+    + insertar(v : Vehiculo) : void
+    + buscarPorPlaca(placa : String) : Optional<Vehiculo>
+    + listar() : List<Vehiculo>
+    + actualizar(v : Vehiculo) : void
+  }
+  interface ZonaRepository {
+    + insertar(z : Zona) : void
+    + buscarPorCodigo(codigo : String) : Optional<Zona>
+    + listar() : List<Zona>
+    + listarPorTipo(tipo : TipoVehiculo) : List<Zona>
+    + actualizar(z : Zona) : void
+    + listarOcupacion() : List<OcupacionZona>
+    + actualizarCapacidadSegura(codigo : String, nuevaCapacidad : int) : Zona
+  }
+  interface IngresoRepository {
+    + insertar(i : Ingreso) : void
+    + buscarPorId(id : int) : Optional<Ingreso>
+    + buscarAbiertoPorPlaca(placa : String) : Optional<Ingreso>
+    + contarAbiertosPorZona(codigo : String) : int
+    + listarAbiertos() : List<Ingreso>
+    + listarPorPlaca(placa : String) : List<Ingreso>
+    + registrarSalida(id : int, salida : LocalDateTime) : void
+    + insertarConReserva(ingreso : Ingreso) : Ingreso
+  }
+  class VehiculoRepositoryJdbc
+  class ZonaRepositoryJdbc
+  class IngresoRepositoryJdbc
+}
+
+package "model" {
+  enum TipoVehiculo {
+    AUTOMOVIL
+    MOTOCICLETA
+  }
+  enum CategoriaVehiculo {
+    PARTICULAR
+    OFICIAL
+    VISITANTE
+  }
+  class Vehiculo {
+    - placa : String
+    - tipo : TipoVehiculo
+    - marca : String
+    - color : String
+    - propietario : String
+    - categoria : CategoriaVehiculo
+  }
+  class Zona {
+    - codigo : String
+    - nombre : String
+    - tipoVehiculo : TipoVehiculo
+    - capacidad : int
+  }
+  class Ingreso {
+    - id : int
+    - vehiculo : Vehiculo
+    - zona : Zona
+    - fechaHoraEntrada : LocalDateTime
+    - fechaHoraSalida : LocalDateTime
+    + estaAbierto() : boolean
+    + calcularPermanencia(hasta : LocalDateTime) : Duration
+  }
+  class OcupacionZona {
+    - zona : Zona
+    - ocupados : int
+    + getLibres() : int
+    + getDisponiblesGenerales() : int
+    + getDisponiblesReservados() : int
+  }
+}
+
+package "exception" {
+  class ValidacionException
+  class ReglaNegocioException
+  class EspaciosReservadosException
+  class ParqueoLlenoException
+  class VehiculoYaIngresadoException
+  class EntidadNoEncontradaException
+  class DatosException
+}
+
+' --- relaciones del modelo ---
+Ingreso "0..*" --> "1" Vehiculo : vehiculo
+Ingreso "0..*" --> "1" Zona : zona
+Vehiculo --> "1" TipoVehiculo
+Vehiculo --> "1" CategoriaVehiculo
+Zona --> "1" TipoVehiculo
+OcupacionZona --> "1" Zona
+
+' --- implementaciones ---
+VehiculoRepositoryJdbc ..|> VehiculoRepository
+ZonaRepositoryJdbc ..|> ZonaRepository
+IngresoRepositoryJdbc ..|> IngresoRepository
+VehiculoRepositoryJdbc ..> ConexionBD
+ZonaRepositoryJdbc ..> ConexionBD
+IngresoRepositoryJdbc ..> ConexionBD
+
+' --- dependencias entre capas ---
+App --> VehiculoController
+App --> ZonaController
+App --> IngresoController
+App ..> Contenedor
+App ..> Consola
+Contenedor ..> VehiculoRepositoryJdbc : crea
+Contenedor ..> ZonaRepositoryJdbc : crea
+Contenedor ..> IngresoRepositoryJdbc : crea
+VehiculoController --> VehiculoService
+ZonaController --> ZonaService
+IngresoController --> IngresoService
+VehiculoController ..> Respuesta
+VehiculoService --> VehiculoRepository
+VehiculoService --> IngresoRepository
+ZonaService --> ZonaRepository
+ZonaService --> IngresoRepository
+IngresoService --> IngresoRepository
+IngresoService --> VehiculoRepository
+IngresoService --> ZonaRepository
+
+' --- excepciones ---
+ParqueoLlenoException --|> ReglaNegocioException
+EspaciosReservadosException --|> ReglaNegocioException
+VehiculoYaIngresadoException --|> ReglaNegocioException
+IngresoService ..> ParqueoLlenoException : lanza
+IngresoService ..> EspaciosReservadosException : lanza
+IngresoService ..> VehiculoYaIngresadoException : lanza
+VehiculoService ..> ValidacionException : lanza
+IngresoRepositoryJdbc ..> DatosException : lanza
+IngresoRepositoryJdbc ..> EspaciosReservadosException : valida reservas
+@enduml

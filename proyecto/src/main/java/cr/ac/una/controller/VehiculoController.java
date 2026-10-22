@@ -1,5 +1,6 @@
 package cr.ac.una.controller;
 
+import cr.ac.una.model.CategoriaVehiculo;
 import cr.ac.una.model.TipoVehiculo;
 import cr.ac.una.model.Vehiculo;
 import cr.ac.una.service.VehiculoService;
@@ -15,9 +16,9 @@ public class VehiculoController {
     }
 
     public Respuesta<Vehiculo> registrar(String placa, TipoVehiculo tipo, String marca,
-                                         String color, String propietario) {
+                                         String color, String propietario, CategoriaVehiculo categoria) {
         return ManejadorErrores.ejecutar("Vehículo registrado correctamente.",
-                () -> vehiculoService.registrar(new Vehiculo(placa, tipo, marca, color, propietario)));
+                () -> vehiculoService.registrar(new Vehiculo(placa, tipo, marca, color, propietario,categoria)));
     }
 
     public Respuesta<Vehiculo> buscar(String placa) {
@@ -29,8 +30,8 @@ public class VehiculoController {
     }
 
     public Respuesta<Vehiculo> actualizar(String placa, TipoVehiculo tipo, String marca,
-                                          String color, String propietario) {
+                                          String color, String propietario, CategoriaVehiculo categoria) {
         return ManejadorErrores.ejecutar("Vehículo actualizado correctamente.",
-                () -> vehiculoService.actualizar(new Vehiculo(placa, tipo, marca, color, propietario)));
+                () -> vehiculoService.actualizar(new Vehiculo(placa, tipo, marca, color, propietario, categoria)));
     }
 }

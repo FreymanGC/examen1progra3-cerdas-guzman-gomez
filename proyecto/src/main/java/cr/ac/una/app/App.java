@@ -8,6 +8,7 @@ import cr.ac.una.controller.VehiculoController;
 import cr.ac.una.controller.ZonaController;
 import cr.ac.una.model.Ingreso;
 import cr.ac.una.model.TipoVehiculo;
+import cr.ac.una.model.CategoriaVehiculo;
 import cr.ac.una.model.Vehiculo;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -28,7 +29,6 @@ import java.util.List;
 public class App {
 
     private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
     private final VehiculoController vehiculos;
     private final ZonaController zonas;
     private final IngresoController ingresos;
@@ -95,7 +95,8 @@ public class App {
                 String marca = Consola.leerTexto("Marca: ");
                 String color = Consola.leerTexto("Color: ");
                 String propietario = Consola.leerTexto("Propietario: ");
-                mostrar(vehiculos.registrar(placa, tipo, marca, color, propietario));
+                CategoriaVehiculo categoria = leerCategoria();
+                mostrar(vehiculos.registrar(placa, tipo, marca, color, propietario, categoria));
             }
             case 2 -> mostrar(vehiculos.buscar(Consola.leerTexto("Placa: ")));
             case 3 -> mostrarLista(vehiculos.listar(), Object::toString);
@@ -118,7 +119,8 @@ public class App {
         String color = valorOActual(Consola.leerTexto("Color [" + v.getColor() + "]: "), v.getColor());
         String propietario = valorOActual(
                 Consola.leerTexto("Propietario [" + v.getPropietario() + "]: "), v.getPropietario());
-        mostrar(vehiculos.actualizar(v.getPlaca(), tipo, marca, color, propietario));
+        CategoriaVehiculo categoria = leerCategoriaOpcional(v.getCategoria());
+        mostrar(vehiculos.actualizar(v.getPlaca(), tipo, marca, color, propietario, categoria));
     }
 
     private void menuZonas() {
@@ -256,4 +258,55 @@ public class App {
     private static String valorOActual(String nuevo, String actual) {
         return nuevo.isBlank() ? actual : nuevo;
     }
+    
+    private static CategoriaVehiculo leerCategoria() {
+    while (true) {
+        System.out.println("Categoría del vehículo:");
+        System.out.println("1. PARTICULAR");
+        System.out.println("2. OFICIAL");
+        System.out.println("3. VISITANTE");
+
+        String opcion = Consola.leerTexto("Seleccione una opción: ");
+
+        switch (opcion) {
+            case "1":
+                return CategoriaVehiculo.PARTICULAR;
+            case "2":
+                return CategoriaVehiculo.OFICIAL;
+            case "3":
+                return CategoriaVehiculo.VISITANTE;
+            default:
+                System.out.println("Categoría inválida. Intente nuevamente.");
+            }
+        }
+    }
+    
+    private static CategoriaVehiculo leerCategoriaOpcional(
+        CategoriaVehiculo actual) {
+
+        while (true) {
+            System.out.println("Categoría actual: " + actual);
+            System.out.println("1. PARTICULAR");
+            System.out.println("2. OFICIAL");
+            System.out.println("3. VISITANTE");
+
+            String opcion = Consola.leerTexto(
+                "Nueva categoría (Enter para conservar): ").trim();
+
+            switch (opcion) {
+                case "":
+                    return actual;
+                case "1":
+                    return CategoriaVehiculo.PARTICULAR;
+                case "2":
+                    return CategoriaVehiculo.OFICIAL;
+                case "3":
+                    return CategoriaVehiculo.VISITANTE;
+                default:
+                    System.out.println(
+                        "Categoría inválida. Intente nuevamente.");
+            }
+        }
+    }
 }
+

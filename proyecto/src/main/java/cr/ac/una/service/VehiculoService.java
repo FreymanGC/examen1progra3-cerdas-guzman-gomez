@@ -52,13 +52,26 @@ public class VehiculoService {
      */
     public Vehiculo actualizar(Vehiculo cambios) {
         validar(cambios);
+
         Vehiculo actual = buscarPorPlaca(cambios.getPlaca());
-        if (actual.getTipo() != cambios.getTipo()
-                && ingresoRepository.buscarAbiertoPorPlaca(actual.getPlaca()).isPresent()) {
-            throw new ReglaNegocioException("No se puede cambiar el tipo del vehículo " + actual.getPlaca()
-                    + " mientras está dentro del parqueo.");
-        }
+
+        boolean cambioTipo = actual.getTipo() != cambios.getTipo();
+
+        boolean cambioCategoria =
+            actual.getCategoria() != cambios.getCategoria();
+
+        if ((cambioTipo || cambioCategoria)
+            && ingresoRepository.buscarAbiertoPorPlaca(
+                    actual.getPlaca()).isPresent()) {
+
+            throw new ReglaNegocioException(
+                "No se puede cambiar el tipo ni la categoría del vehículo "
+                + actual.getPlaca()
+                + " mientras está dentro del parqueo.");
+            }
+
         vehiculoRepository.actualizar(cambios);
+
         return cambios;
     }
 
@@ -68,6 +81,9 @@ public class VehiculoService {
         if (v == null) {
             throw new ValidacionException("Debe indicar los datos del vehículo.");
         }
+        if (v.getCategoria() == null) {
+            throw new ValidacionException("Debe indicar la categoría del vehículo.");
+}
         v.setPlaca(normalizarPlaca(v.getPlaca()));
         if (v.getTipo() == null) {
             throw new ValidacionException("Debe indicar el tipo de vehículo.");

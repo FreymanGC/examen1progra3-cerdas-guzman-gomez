@@ -60,18 +60,16 @@ public class ZonaService {
      * RN-06: la nueva capacidad no puede ser menor que la cantidad de
      * vehículos que ya están dentro de la zona.
      */
-    public Zona actualizarCapacidad(String codigo, int nuevaCapacidad) {
-        validarCapacidad(nuevaCapacidad);
-        Zona zona = buscarPorCodigo(codigo);
-        int ocupados = ingresoRepository.contarAbiertosPorZona(zona.getCodigo());
-        if (nuevaCapacidad < ocupados) {
-            throw new ReglaNegocioException("La zona " + zona.getCodigo() + " tiene " + ocupados
-                    + " vehículos dentro; la capacidad no puede ser menor que eso.");
-        }
-        zona.setCapacidad(nuevaCapacidad);
-        zonaRepository.actualizar(zona);
-        return zona;
-    }
+    public Zona actualizarCapacidad(
+        String codigo, int nuevaCapacidad) {
+
+    validarCapacidad(nuevaCapacidad);
+
+    String c = normalizarCodigo(codigo);
+
+    return zonaRepository.actualizarCapacidadSegura(
+            c, nuevaCapacidad);
+}
 
     /** Espacios ocupados y libres por zona. */
     public List<OcupacionZona> consultarOcupacion() {

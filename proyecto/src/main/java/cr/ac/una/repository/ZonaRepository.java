@@ -21,4 +21,6 @@ public interface ZonaRepository {
 
     /** Cada zona con la cantidad de vehículos que tiene dentro (JOIN + COUNT). */
     List<OcupacionZona> listarOcupacion();
+    
+    Zona actualizarCapacidadSegura(String codigo, int nuevaCapacidad);
 }

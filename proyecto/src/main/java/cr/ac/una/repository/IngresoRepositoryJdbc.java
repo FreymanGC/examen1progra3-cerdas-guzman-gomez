@@ -2,8 +2,13 @@ package cr.ac.una.repository;
 
 import cr.ac.una.config.ConexionBD;
 import cr.ac.una.exception.DatosException;
+import cr.ac.una.exception.EspaciosReservadosException;
+import cr.ac.una.exception.ParqueoLlenoException;
+import cr.ac.una.exception.VehiculoYaIngresadoException;
+import cr.ac.una.exception.ReglaNegocioException;
 import cr.ac.una.model.Ingreso;
 import cr.ac.una.model.TipoVehiculo;
+import cr.ac.una.model.CategoriaVehiculo;
 import cr.ac.una.model.Vehiculo;
 import cr.ac.una.model.Zona;
 import java.sql.Connection;
@@ -26,7 +31,7 @@ public class IngresoRepositoryJdbc implements IngresoRepository {
     /** SELECT base con JOIN; las consultas le agregan su WHERE / ORDER BY. */
     private static final String SELECT_BASE = """
             SELECT i.id, i.fecha_hora_entrada, i.fecha_hora_salida,
-                   v.placa, v.tipo, v.marca, v.color, v.propietario,
+                   v.placa, v.tipo, v.marca, v.color, v.propietario,v.categoria,
                    z.codigo, z.nombre, z.tipo_vehiculo, z.capacidad
             FROM ingreso i
             JOIN vehiculo v ON v.placa = i.vehiculo_placa
@@ -142,7 +147,8 @@ public class IngresoRepositoryJdbc implements IngresoRepository {
                 TipoVehiculo.valueOf(rs.getString("tipo")),
                 rs.getString("marca"),
                 rs.getString("color"),
-                rs.getString("propietario"));
+                rs.getString("propietario"),
+                CategoriaVehiculo.valueOf(rs.getString("categoria")));
         Zona zona = new Zona(
                 rs.getString("codigo"),
                 rs.getString("nombre"),
@@ -155,5 +161,163 @@ public class IngresoRepositoryJdbc implements IngresoRepository {
                 zona,
                 rs.getTimestamp("fecha_hora_entrada").toLocalDateTime(),
                 salida == null ? null : salida.toLocalDateTime());
+    }
+    
+    @Override
+    public Ingreso insertarConReserva(Ingreso ingreso) {
+        String placa = ingreso.getVehiculo().getPlaca();
+        String codigoZona = ingreso.getZona().getCodigo();
+
+        String bloquearVehiculo =
+            "SELECT placa FROM vehiculo WHERE placa = ? FOR UPDATE";
+
+        String bloquearZona =
+            "SELECT tipo_vehiculo, capacidad FROM zona "
+            + "WHERE codigo = ? FOR UPDATE";
+
+        String consultarDuplicado =
+            "SELECT COUNT(*) FROM ingreso "
+            + "WHERE vehiculo_placa = ? AND fecha_hora_salida IS NULL";
+
+        String consultarOcupacion =
+        "SELECT id FROM ingreso "
+        + "WHERE zona_codigo = ? AND fecha_hora_salida IS NULL "
+        + "FOR UPDATE";
+
+        String insertarIngreso =
+            "INSERT INTO ingreso "
+            + "(vehiculo_placa, zona_codigo, fecha_hora_entrada) "
+            + "VALUES (?, ?, ?)";
+
+        try (Connection con = ConexionBD.obtenerConexion()) {
+            con.setAutoCommit(false);
+
+            try {
+            // Bloquear el vehículo para evitar ingresos simultáneos
+            // con la misma placa.
+                try (PreparedStatement ps =
+                    con.prepareStatement(bloquearVehiculo)) {
+                    ps.setString(1, placa);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new ReglaNegocioException(
+                                "El vehículo " + placa + " no existe.");
+                    }
+                }
+            }
+
+            int capacidad;
+            TipoVehiculo tipoZona;
+
+            // Bloquear la zona durante toda la operación.
+            try (PreparedStatement ps =
+                    con.prepareStatement(bloquearZona)) {
+                ps.setString(1, codigoZona);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new ReglaNegocioException(
+                                "La zona " + codigoZona + " no existe.");
+                    }
+
+                    capacidad = rs.getInt("capacidad");
+                    tipoZona = TipoVehiculo.valueOf(
+                            rs.getString("tipo_vehiculo"));
+                }
+            }
+
+            // RN-03: verificar compatibilidad.
+            if (tipoZona != ingreso.getVehiculo().getTipo()) {
+                throw new ReglaNegocioException(
+                        "El tipo de vehículo no es compatible "
+                        + "con la zona " + codigoZona + ".");
+            }
+
+            // RN-02: impedir ingresos duplicados.
+            try (PreparedStatement ps =
+                    con.prepareStatement(consultarDuplicado)) {
+                ps.setString(1, placa);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    rs.next();
+
+                    if (rs.getInt(1) > 0) {
+                        throw new VehiculoYaIngresadoException(placa);
+                    }
+                }
+            }
+
+            int ocupados = 0;
+
+            try (PreparedStatement ps =
+            con.prepareStatement(consultarOcupacion)) {
+
+            ps.setString(1, codigoZona);
+
+            try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                ocupados++;
+            }
+        }
+}
+
+            // RN-01: capacidad máxima.
+            if (ocupados >= capacidad) {
+                throw new ParqueoLlenoException(
+                        "La zona " + codigoZona + " está llena ("
+                        + ocupados + "/" + capacidad + ").");
+            }
+
+            // RN-N1, RN-N2 y RN-N3: espacios reservados.
+            boolean oficial =
+                    ingreso.getVehiculo().getCategoria()
+                    == CategoriaVehiculo.OFICIAL;
+
+            int limite = oficial
+                    ? capacidad
+                    : Math.max(0, capacidad - 2);
+
+            if (ocupados >= limite) {
+                throw new EspaciosReservadosException(
+                        "Los últimos dos espacios de la zona "
+                        + codigoZona
+                        + " están reservados para vehículos oficiales.");
+            }
+
+            try (PreparedStatement ps = con.prepareStatement(
+                    insertarIngreso, Statement.RETURN_GENERATED_KEYS)) {
+
+                ps.setString(1, placa);
+                ps.setString(2, codigoZona);
+                ps.setTimestamp(3, Timestamp.valueOf(
+                        ingreso.getFechaHoraEntrada()));
+
+                ps.executeUpdate();
+
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        ingreso.setId(rs.getInt(1));
+                    }
+                }
+            }
+
+            con.commit();
+            return ingreso;
+
+        } catch (SQLException | RuntimeException e) {
+            try {
+                con.rollback();
+            } catch (SQLException rollbackError) {
+                e.addSuppressed(rollbackError);
+            }
+            throw e;
+        }
+
+    } catch (SQLException e) {
+        throw new DatosException(
+                "Error al registrar el ingreso transaccional "
+                + "del vehículo " + placa, e);
+        }
     }
 }

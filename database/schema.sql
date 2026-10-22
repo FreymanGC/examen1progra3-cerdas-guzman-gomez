@@ -2,7 +2,7 @@
 -- Examen Práctico Integrador — Programación III
 -- Caso 6: Administración de parqueos
 --
--- Versión definitiva (Etapa 2): base de datos, tablas, restricciones
+-- Versión actualizada (Etapa 3): base de datos, tablas, restricciones
 -- y datos de prueba.
 --
 -- Ejecutar:  mysql -u root -p < database/schema.sql
@@ -29,8 +29,10 @@ CREATE TABLE vehiculo (
     marca        VARCHAR(40)  NOT NULL,
     color        VARCHAR(30)  NOT NULL,
     propietario  VARCHAR(80)  NOT NULL,
+    categoria    VARCHAR(15) NOT NULL DEFAULT 'PARTICULAR',
     CONSTRAINT pk_vehiculo PRIMARY KEY (placa),
-    CONSTRAINT ck_vehiculo_tipo CHECK (tipo IN ('AUTOMOVIL', 'MOTOCICLETA'))
+    CONSTRAINT ck_vehiculo_tipo CHECK (tipo IN ('AUTOMOVIL', 'MOTOCICLETA')),
+    CONSTRAINT ck_vehiculo_categoria CHECK (categoria IN ('PARTICULAR', 'OFICIAL', 'VISITANTE'))
 );
 
 -- Secciones del parqueo; cada una admite un único tipo de vehículo.
@@ -72,7 +74,10 @@ CREATE TABLE ingreso (
 CREATE INDEX ix_ingreso_zona_abierto ON ingreso (zona_codigo, fecha_hora_salida);
 
 -- ---------------------------------------------------------------------
--- Datos de prueba
+-- Datos de prueba compatibles con espacios reservados
+-- Los últimos 2 espacios de cada zona son exclusivos de OFICIAL.
+-- Para PARTICULAR y VISITANTE, el límite es MAX(0, capacidad - 2).
+-- Los ingresos de prueba se insertan directamente; respetan esta regla.
 -- ---------------------------------------------------------------------
 
 INSERT INTO zona (codigo, nombre, tipo_vehiculo, capacidad) VALUES
@@ -80,15 +85,16 @@ INSERT INTO zona (codigo, nombre, tipo_vehiculo, capacidad) VALUES
     ('B', 'Zona B - Automóviles sur',   'AUTOMOVIL',   3),
     ('M', 'Zona M - Motocicletas',      'MOTOCICLETA', 2);
 
-INSERT INTO vehiculo (placa, tipo, marca, color, propietario) VALUES
-    ('BCD123',     'AUTOMOVIL',   'Toyota',     'Blanco', 'Ana Rojas Mora'),
-    ('BRT456',     'AUTOMOVIL',   'Hyundai',    'Gris',   'Luis Solano Vargas'),
-    ('CLM789',     'AUTOMOVIL',   'Nissan',     'Rojo',   'María Jiménez Cruz'),
-    ('DFG321',     'AUTOMOVIL',   'Suzuki',     'Azul',   'Carlos Méndez Arias'),
-    ('HJK654',     'AUTOMOVIL',   'Kia',        'Negro',  'Sofía Castro León'),
-    ('MOT-100200', 'MOTOCICLETA', 'Honda',      'Rojo',   'Diego Brenes Quesada'),
-    ('MOT-300400', 'MOTOCICLETA', 'Yamaha',     'Negro',  'Valeria Umaña Soto'),
-    ('MOT-500600', 'MOTOCICLETA', 'Bajaj',      'Azul',   'Andrés Porras Vega');
+INSERT INTO vehiculo (placa, tipo, marca, color, propietario, categoria) VALUES
+    ('BCD123',     'AUTOMOVIL',   'Toyota',  'Blanco', 'Ana Rojas Mora',       'PARTICULAR'),
+    ('BRT456',     'AUTOMOVIL',   'Hyundai', 'Gris',   'Luis Solano Vargas',   'PARTICULAR'),
+    ('CLM789',     'AUTOMOVIL',   'Nissan',  'Rojo',   'María Jiménez Cruz',   'VISITANTE'),
+    ('DFG321',     'AUTOMOVIL',   'Suzuki',  'Azul',   'Carlos Méndez Arias',  'OFICIAL'),
+    ('HJK654',     'AUTOMOVIL',   'Kia',     'Negro',  'Sofía Castro León',    'PARTICULAR'),
+    ('OFI789',     'AUTOMOVIL',   'Toyota',  'Gris',   'Institución',          'OFICIAL'),
+    ('MOT-100200', 'MOTOCICLETA', 'Honda',   'Rojo',   'Diego Brenes Quesada', 'OFICIAL'),
+    ('MOT-300400', 'MOTOCICLETA', 'Yamaha',  'Negro',  'Valeria Umaña Soto',  'OFICIAL'),
+    ('MOT-500600', 'MOTOCICLETA', 'Bajaj',   'Azul',   'Andrés Porras Vega',  'PARTICULAR');
 
 -- Historial (ingresos ya cerrados)
 INSERT INTO ingreso (vehiculo_placa, zona_codigo, fecha_hora_entrada, fecha_hora_salida) VALUES
@@ -96,8 +102,9 @@ INSERT INTO ingreso (vehiculo_placa, zona_codigo, fecha_hora_entrada, fecha_hora
     ('CLM789',     'B', NOW() - INTERVAL 1 DAY - INTERVAL 8 HOUR, NOW() - INTERVAL 1 DAY - INTERVAL 3 HOUR),
     ('MOT-500600', 'M', NOW() - INTERVAL 1 DAY - INTERVAL 6 HOUR, NOW() - INTERVAL 1 DAY - INTERVAL 2 HOUR);
 
--- Vehículos que están dentro ahora (ingresos abiertos).
--- La zona M queda LLENA (2/2) para demostrar RN-01 con MOT-500600.
+-- Ingresos abiertos: A tiene 2/5 (un espacio general libre y dos reservados).
+-- M tiene 2/2, ambos OFICIALES. Un PARTICULAR no puede ingresar a M.
+-- B queda vacía para probar ingresos de visitantes y particulares.
 INSERT INTO ingreso (vehiculo_placa, zona_codigo, fecha_hora_entrada) VALUES
     ('BCD123',     'A', NOW() - INTERVAL 3 HOUR),
     ('BRT456',     'A', NOW() - INTERVAL 90 MINUTE),
